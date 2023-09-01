@@ -128,7 +128,7 @@ public class ProductsController : Controller
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
-    public IActionResult DeleteCountry(int productId)
+    public IActionResult DeleteProduct(int productId)
     {
         if (!_productService.ProductExists(productId))
         {
@@ -139,4 +139,40 @@ public class ProductsController : Controller
 
         return NoContent();
     }
+    
+    [HttpGet("shopping-cart-info/{productId}")]
+    [ProducesResponseType(200, Type = typeof(AddToShoppingCardDto))]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult GetShoppingCartInfo(int productId)
+    {
+        var shoppingCartInfo = _productService.GetShoppingCartInfo(productId);
+    
+        if (shoppingCartInfo == null)
+            return NotFound();
+
+        return Ok(shoppingCartInfo);
+    }
+    
+    [HttpPost("add-to-shopping-cart")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public IActionResult AddToShoppingCart([FromBody] AddToShoppingCardDto item)
+    {
+        if (item == null)
+            return BadRequest(ModelState);
+
+        bool addedToCart = _productService.AddToShoppingCart(item);
+
+        if (addedToCart)
+        {
+            return Ok("Product added to the shopping cart successfully.");
+        }
+        else
+        {
+            ModelState.AddModelError("", "Unable to add the product to the shopping cart.");
+            return BadRequest(ModelState);
+        }
+    }
+
 }

@@ -1,4 +1,5 @@
 using Domain;
+using Domain.Dto;
 
 namespace Service.Interface;
 
@@ -10,6 +11,9 @@ public interface IProductService
     bool UpdateProduct(Product product);
     void DeleteProduct(int id);
     bool ProductExists(int id);
+    AddToShoppingCardDto GetShoppingCartInfo(int? id);
+    bool AddToShoppingCart(AddToShoppingCardDto item);
+    
     // void AttachProduct(Product product);
 
     // AddToShoppingCardDto GetShoppingCartInfo(Guid? id);

@@ -1,21 +1,29 @@
 using Domain;
+using Domain.Dto;
 using Domain.Relations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Repository.Interface;
 using Service.Interface;
 
+
 namespace Service.Implementation;
 
 public class ProductService : IProductService
 {
     private readonly IRepository<Product> _productRepository;
-    private readonly ILogger<ProductService> _logger;
+    private readonly IProductInShoppingCartRepository _productInShoppingCartRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IShoppingCartRepository _shoppingCartRepository;
 
-    public ProductService(IRepository<Product> productRepository, ILogger<ProductService> logger)
+    public ProductService(IRepository<Product> productRepository,
+        IProductInShoppingCartRepository productInShoppingCartRepository, IUserRepository userRepository,
+        IShoppingCartRepository shoppingCartRepository)
     {
         _productRepository = productRepository;
-        _logger = logger;
+        _userRepository = userRepository;
+        _productInShoppingCartRepository = productInShoppingCartRepository;
+        _shoppingCartRepository = shoppingCartRepository;
     }
 
     public ICollection<Product> GetAllProducts()
@@ -37,7 +45,7 @@ public class ProductService : IProductService
         }
         catch (Exception ex)
         {
-            return false; 
+            return false;
         }
     }
 
@@ -57,8 +65,67 @@ public class ProductService : IProductService
         return this._productRepository.ProductExists(id);
     }
 
-    // public void AttachProduct(Product product)
-    // {
-    //     _productRepository.AttachProduct(product);
-    // }
+    public AddToShoppingCardDto GetShoppingCartInfo(int? id)
+    {
+        var product = this.GetProduct(id);
+        AddToShoppingCardDto model = new AddToShoppingCardDto
+        {
+            // SelectedProduct = product,
+            SelectedProductId = product.Id,
+            Quantity = 1
+        };
+
+        return model;
+    }
+
+    public bool AddToShoppingCart(AddToShoppingCardDto item)
+    {
+        // var user = this._userRepository.GetById(item.UserId);
+
+        var userShoppingCard = _shoppingCartRepository.GetByUserId(item.UserId);
+
+        if (item.SelectedProductId != null && userShoppingCard != null)
+        {
+            var product = this.GetProduct(item.SelectedProductId);
+            //{896c1325-a1bb-4595-92d8-08da077402fc}
+
+            if (product != null)
+            {
+                ProductInShoppingCart itemToAdd = new ProductInShoppingCart
+                {
+                    Product = product,
+                    ProductId = product.Id,
+                    ShoppingCart = userShoppingCard,
+                    ShoppingCartId = userShoppingCard.Id,
+                    Quantity = item.Quantity
+                };
+
+                if (userShoppingCard.ProductInShoppingCarts != null)
+                {
+                    var existing = userShoppingCard.ProductInShoppingCarts.Where(z =>
+                        z.ShoppingCartId == userShoppingCard.Id && z.ProductId == itemToAdd.ProductId).FirstOrDefault();
+                    if (existing != null)
+                    {
+                        existing.Quantity += itemToAdd.Quantity;
+                        this._productInShoppingCartRepository.Update(existing);
+                    }
+                    else
+                    {
+                        this._productInShoppingCartRepository.Insert(itemToAdd);
+                    }
+                }
+                else
+                {
+                    this._productInShoppingCartRepository.Insert(itemToAdd);
+                }
+
+
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
 }
