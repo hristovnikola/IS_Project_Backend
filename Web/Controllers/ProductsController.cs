@@ -1,6 +1,7 @@
 using AutoMapper;
 using Domain;
 using Domain.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Implementation;
 using Service.Interface;
@@ -8,7 +9,7 @@ using Service.Interface;
 
 namespace Web.Controllers;
 
-
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class ProductsController : Controller

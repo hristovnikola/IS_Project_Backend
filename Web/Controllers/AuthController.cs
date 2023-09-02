@@ -69,7 +69,7 @@ namespace Web.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<string>> Login([FromBody] LoginUserDto request)
         {
             try
             {

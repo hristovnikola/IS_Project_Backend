@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using Domain.Dto; // Import your DTOs
+using Domain.Dto;
+using Microsoft.AspNetCore.Authorization; // Import your DTOs
 using Service.Interface; // Import your service interface
 
 namespace Web.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ShoppingCartController : ControllerBase
@@ -17,12 +19,14 @@ namespace Web.Controllers
             _shoppingCartService = shoppingCartService;
         }
 
-        [HttpGet("shopping-cart-info/{userId}")]
+        [HttpGet("shopping-cart-info/")]
         [ProducesResponseType(200, Type = typeof(ShoppingCartDto))] // Adjust the response type to match your DTO
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult GetShoppingCartInfo(int userId)
         {
+            var username = User.Identity?.Name;
+            
             var shoppingCartInfo = _shoppingCartService.getShoppingCartInfo(userId);
 
             if (shoppingCartInfo == null)
@@ -58,8 +62,8 @@ namespace Web.Controllers
         [ProducesResponseType(404)]
         public IActionResult Order(int userId)
         {
-            try
-            {
+            // try
+            // {
                 bool orderPlaced = _shoppingCartService.order(userId);
 
                 if (orderPlaced)
@@ -70,12 +74,12 @@ namespace Web.Controllers
                 {
                     return NotFound("User not found or shopping cart is empty.");
                 }
-            }
-            catch (Exception ex)
-            {
-                // Log the exception or handle it as needed
-                return StatusCode(500, "Internal Server Error");
-            }
+            // }
+            // catch (Exception ex)
+            // {
+            //     // Log the exception or handle it as needed
+            //     return StatusCode(500, "Internal Server Error");
+            // }
         }
     }
 }

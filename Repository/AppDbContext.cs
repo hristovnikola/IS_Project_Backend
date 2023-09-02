@@ -17,11 +17,18 @@ public class AppDbContext : DbContext
     public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     public DbSet<ProductInOrder> ProductInOrders { get; set; }
     public DbSet<ProductInShoppingCart> ProductInShoppingCarts { get; set; }
+    public DbSet<Email> Emails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        modelBuilder.Entity<User>()
+            .HasIndex(user => user.Username);
 
+        modelBuilder.Entity<User>()
+            .HasIndex(user => user.Email);
+        
         modelBuilder.Entity<ShoppingCart>()
             .HasOne<User>(item => item.User)
             .WithOne(item => item.ShoppingCart)

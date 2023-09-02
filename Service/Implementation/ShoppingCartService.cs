@@ -2,6 +2,11 @@ using System.Text;
 using Domain;
 using Domain.Dto;
 using Domain.Relations;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
+using MimeKit.Text;
 using Repository.Interface;
 using Service.Interface;
 
@@ -16,14 +21,18 @@ public class ShoppingCartService : IShoppingCartService
     // private readonly IRepository<ProductInOrder> _productInOrderRepository;
     private readonly IUserRepository _userRepository;
     private readonly IProductInOrderRepository _productInOrderRepository;
+    private readonly IConfiguration _configuration;
+    private readonly IEmailRepository _emailRepository;
 
     public ShoppingCartService(IShoppingCartRepository shoppingCartRepository, IUserRepository userRepository,
-        IRepository<Order> orderRepository, IProductInOrderRepository productInOrderRepository)
+        IRepository<Order> orderRepository, IProductInOrderRepository productInOrderRepository, IConfiguration configuration, IEmailRepository emailRepository)
     {
         _shoppingCartRepository = shoppingCartRepository;
         _userRepository = userRepository;
         _orderRepository = orderRepository;
         _productInOrderRepository = productInOrderRepository;
+        _configuration = configuration;
+        _emailRepository = emailRepository;
         // _productInOrderRepository = productInOrderRepository;
         // _mailRepository = mailRepository;
     }
@@ -89,12 +98,6 @@ public class ShoppingCartService : IShoppingCartService
                 var loggedInUser = this._userRepository.GetById(userId);
                 var userCard = _shoppingCartRepository.GetByUserId(userId);
 
-                // EmailMessage mail = new EmailMessage();
-                // mail.MailTo = loggedInUser.Email;
-                // mail.Subject = "Sucessfuly created order!";
-                // mail.Status = false;
-
-
                 Order order = new Order
                 {
                     User = loggedInUser,
@@ -129,8 +132,30 @@ public class ShoppingCartService : IShoppingCartService
 
                 sb.AppendLine("Total price for your order: " + totalPrice.ToString());
 
-                // mail.Content = sb.ToString();
+                var host = _configuration.GetSection("EmailSettings:Host").Value;
+                var userName = _configuration.GetSection("EmailSettings:UserName").Value;
+                var password = _configuration.GetSection("EmailSettings:Password").Value;
 
+                var message = new MimeMessage();
+                message.From.Add(MailboxAddress.Parse(userName));
+                message.To.Add(MailboxAddress.Parse(loggedInUser.Email));
+                message.Subject = "Online PC Store Order";
+                message.Body = new TextPart(TextFormat.Text) { Text = sb.ToString()};
+
+                using var smtpClient = new SmtpClient();
+                smtpClient.Connect(host, 587, SecureSocketOptions.StartTls);
+                smtpClient.Authenticate(userName, password);
+                smtpClient.Send(message);
+                smtpClient.Disconnect(true);
+
+                Email email = new Email()
+                {
+                    To = loggedInUser.Email,
+                    Subject = "Online PC Store Order",
+                    Body = sb.ToString()
+                };
+                
+                _emailRepository.Create(email);
 
                 productInOrders.AddRange(result);
 
