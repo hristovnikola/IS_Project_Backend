@@ -67,6 +67,7 @@ public class ProductService : IProductService
 
     public AddToShoppingCardDto GetShoppingCartInfo(int? id)
     {
+        
         var product = this.GetProduct(id);
         AddToShoppingCardDto model = new AddToShoppingCardDto
         {

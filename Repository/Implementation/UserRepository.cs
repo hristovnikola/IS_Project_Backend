@@ -1,19 +1,23 @@
+using Domain;
 using Domain.Identity;
+using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
 namespace Repository.Implementation
 {
     public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
+        private DbSet<User> entities;
 
         public UserRepository(AppDbContext context)
         {
             _context = context;
+            entities = _context.Set<User>(); 
         }
 
         public User GetById(int id)
         {
-            return _context.Users.FirstOrDefault(u => u.Id == id);
+            return entities.FirstOrDefault(u => u.Id == id);
         }
 
         public User GetByUsername(string username)
@@ -38,8 +42,8 @@ namespace Repository.Implementation
 
         public void Update(User user)
         {
-            // You may want to add error handling for not found scenarios here.
             _context.Users.Update(user);
+            _context.SaveChanges();
         }
 
         public void SaveChanges()

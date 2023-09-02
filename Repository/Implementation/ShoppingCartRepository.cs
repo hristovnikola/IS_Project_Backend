@@ -6,18 +6,25 @@ namespace Repository.Implementation;
 
 public class ShoppingCartRepository : IShoppingCartRepository
 {
-    private readonly AppDbContext _dbContext; 
+    private readonly AppDbContext _dbContext;
     private DbSet<ShoppingCart> entities;
 
     public ShoppingCartRepository(AppDbContext dbContext)
     {
         _dbContext = dbContext;
-        entities = _dbContext.Set<ShoppingCart>(); 
+        entities = _dbContext.Set<ShoppingCart>();
     }
-    
+
     public ShoppingCart GetByUserId(int? userId)
     {
         return entities.Include(sc => sc.ProductInShoppingCarts)
+            .ThenInclude(pisc => pisc.Product)
             .SingleOrDefault(sc => sc.UserId == userId);
+    }
+
+    public void Update(ShoppingCart shoppingCart)
+    {
+        _dbContext.ShoppingCarts.Update(shoppingCart);
+        _dbContext.SaveChanges();
     }
 }

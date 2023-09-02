@@ -8,7 +8,7 @@ public interface IShoppingCartService
     // bool deleteProductFromSoppingCart(string userId, Guid productId);
     // bool order(string userId);
     
-    ShoppingCartDto getShoppingCartInfo();
-    bool deleteProductFromSoppingCart(int productId);
-    bool order(string userId);
+    ShoppingCartDto getShoppingCartInfo(int userId);
+    bool deleteProductFromSoppingCart(int userId, int productId);
+    bool order(int userId);
 }
