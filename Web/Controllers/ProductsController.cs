@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using AutoMapper;
 using Domain;
 using Domain.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Repository.Interface;
 using Service.Implementation;
 using Service.Interface;
 
@@ -16,11 +18,13 @@ public class ProductsController : Controller
 {
     private readonly IProductService _productService;
     private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
     
-    public ProductsController(IProductService productService,  IMapper mapper)
+    public ProductsController(IProductService productService,  IMapper mapper, IUserRepository userRepository)
     {
         _productService = productService;
         _mapper = mapper;
+        _userRepository = userRepository;
     }
     
     [HttpGet]
@@ -163,8 +167,12 @@ public class ProductsController : Controller
         if (item == null)
             return BadRequest(ModelState);
 
-        bool addedToCart = _productService.AddToShoppingCart(item);
+        var username = User.Identity?.Name;
+        int userId = _userRepository.GetUserIdByUsername(username);
 
+        bool addedToCart = _productService.AddToShoppingCart(userId, item);
+
+        
         if (addedToCart)
         {
             return Ok("Product added to the shopping cart successfully.");

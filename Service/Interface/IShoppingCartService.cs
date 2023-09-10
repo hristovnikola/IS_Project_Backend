@@ -10,5 +10,7 @@ public interface IShoppingCartService
     
     ShoppingCartDto getShoppingCartInfo(int userId);
     bool deleteProductFromSoppingCart(int userId, int productId);
+    bool increaseProductQuantity(int userId, int productId);
+    bool decreaseProductQuantity(int userId, int productId);
     bool order(int userId);
 }

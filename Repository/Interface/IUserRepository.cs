@@ -6,6 +6,7 @@ public interface IUserRepository
 {
     User GetById(int id);
     User GetByUsername(string username);
+    int GetUserIdByUsername(string username);
     User GetByRefreshToken(string refreshToken); // Add this method
 
     void Add(User user);

@@ -1,6 +1,8 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Dto;
-using Microsoft.AspNetCore.Authorization; // Import your DTOs
+using Microsoft.AspNetCore.Authorization;
+using Repository.Interface; // Import your DTOs
 using Service.Interface; // Import your service interface
 
 namespace Web.Controllers
@@ -12,21 +14,26 @@ namespace Web.Controllers
     {
         private readonly IProductService _productService;
         private readonly IShoppingCartService _shoppingCartService;
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public ShoppingCartController(IProductService productService, IShoppingCartService shoppingCartService)
+        public ShoppingCartController(IProductService productService, IShoppingCartService shoppingCartService, IUserRepository userRepository, IMapper mapper)
         {
             _productService = productService;
             _shoppingCartService = shoppingCartService;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         [HttpGet("shopping-cart-info/")]
-        [ProducesResponseType(200, Type = typeof(ShoppingCartDto))] // Adjust the response type to match your DTO
+        [ProducesResponseType(200, Type = typeof(ShoppingCartForLoggedInUserDto))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult GetShoppingCartInfo(int userId)
+        public IActionResult GetShoppingCartInfo()
         {
             var username = User.Identity?.Name;
-            
+            int userId = _userRepository.GetUserIdByUsername(username);
+    
             var shoppingCartInfo = _shoppingCartService.getShoppingCartInfo(userId);
 
             if (shoppingCartInfo == null)
@@ -34,15 +41,21 @@ namespace Web.Controllers
                 return NotFound();
             }
 
-            return Ok(shoppingCartInfo);
+            var shoppingCartDto = _mapper.Map<ShoppingCartForLoggedInUserDto>(shoppingCartInfo);
+
+            return Ok(shoppingCartDto);
         }
 
-        [HttpDelete("remove-product/{userId}/{productId}")]
+
+        [HttpDelete("remove-product/{productId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult RemoveProductFromShoppingCart(int userId, int productId)
+        public IActionResult RemoveProductFromShoppingCart(int productId)
         {
+            var username = User.Identity?.Name;
+            int userId = _userRepository.GetUserIdByUsername(username);
+            
             var removedProduct = _shoppingCartService.deleteProductFromSoppingCart(userId, productId);
             
             if (removedProduct)
@@ -52,6 +65,48 @@ namespace Web.Controllers
             else
             {
                 ModelState.AddModelError("", "Unable to delete the product.");
+                return BadRequest(ModelState);
+            }
+        }
+        
+        [HttpPost("increase-quantity/{productId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult IncreaseProductQuantity(int productId){
+            var username = User.Identity?.Name;
+            int userId = _userRepository.GetUserIdByUsername(username);
+
+            var increasedQuantity = _shoppingCartService.increaseProductQuantity(userId, productId);
+            
+            if (increasedQuantity)
+            {
+                return Ok("Product quantity increased successfully.");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Unable to increase product quantity.");
+                return BadRequest(ModelState);
+            }
+        }
+        
+        [HttpPost("decrease-quantity/{productId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DecreaseProductQuantity(int productId){
+            var username = User.Identity?.Name;
+            int userId = _userRepository.GetUserIdByUsername(username);
+
+            var increasedQuantity = _shoppingCartService.decreaseProductQuantity(userId, productId);
+            
+            if (increasedQuantity)
+            {
+                return Ok("Product quantity decreased successfully.");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Unable to decrease product quantity.");
                 return BadRequest(ModelState);
             }
         }

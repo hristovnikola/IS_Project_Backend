@@ -42,8 +42,6 @@ public class ShoppingCartService : IShoppingCartService
     {
         if(userId != null)
         {
-            var loggedInUser = this._userRepository.GetById(userId);
-
             var userCard = _shoppingCartRepository.GetByUserId(userId);
             
             var allProducts = userCard.ProductInShoppingCarts.ToList();
@@ -91,7 +89,57 @@ public class ShoppingCartService : IShoppingCartService
         return false;
     }
 
-     public bool order(int userId)
+    public bool increaseProductQuantity(int userId, int productId)
+    {
+        if (userId != 0 && productId != 0)
+        {
+            var userShoppingCart = _shoppingCartRepository.GetByUserId(userId);
+
+            if (userShoppingCart != null)
+            {
+                var productInCart = userShoppingCart.ProductInShoppingCarts
+                    .FirstOrDefault(p => p.ProductId == productId);
+
+                if (productInCart != null)
+                {
+                    productInCart.Quantity++;
+                
+                    _shoppingCartRepository.Update(userShoppingCart);
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public bool decreaseProductQuantity(int userId, int productId)
+    {
+        if (userId != 0 && productId != 0)
+        {
+            var userShoppingCart = _shoppingCartRepository.GetByUserId(userId);
+
+            if (userShoppingCart != null)
+            {
+                var productInCart = userShoppingCart.ProductInShoppingCarts
+                    .FirstOrDefault(p => p.ProductId == productId);
+
+                if (productInCart != null)
+                {
+                    productInCart.Quantity--;
+                
+                    _shoppingCartRepository.Update(userShoppingCart);
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public bool order(int userId)
         {
             if (userId != null)
             {

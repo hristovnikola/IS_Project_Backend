@@ -1,5 +1,6 @@
 using AutoMapper;
 using Domain.Dto;
+using Domain.Relations;
 
 namespace Domain.Helper;
 
@@ -9,5 +10,19 @@ public class MappingProfiles : Profile
     {
         CreateMap<Product, ProductDto>();
         CreateMap<ProductDto, Product>();
+        
+        CreateMap<ProductInShoppingCart, ShoppingCartItemDto>()
+            .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
+            .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.Product.ImagePath))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product.Description))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price))
+            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Quantity * src.Product.Price));
+            
+        CreateMap<ShoppingCartDto, ShoppingCartForLoggedInUserDto>();
+
+        CreateMap<ShoppingCart, ShoppingCartForLoggedInUserDto>()
+            .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.ProductInShoppingCarts))
+            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.ProductInShoppingCarts.Sum(item => item.Quantity * item.Product.Price)));
     }
 }

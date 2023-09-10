@@ -12,7 +12,7 @@ public interface IProductService
     void DeleteProduct(int id);
     bool ProductExists(int id);
     AddToShoppingCardDto GetShoppingCartInfo(int? id);
-    bool AddToShoppingCart(AddToShoppingCardDto item);
+    bool AddToShoppingCart(int userId, AddToShoppingCardDto item);
     
     // void AttachProduct(Product product);
 

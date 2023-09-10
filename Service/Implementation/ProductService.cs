@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Repository.Interface;
 using Service.Interface;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace Service.Implementation;
@@ -79,11 +81,11 @@ public class ProductService : IProductService
         return model;
     }
 
-    public bool AddToShoppingCart(AddToShoppingCardDto item)
+    public bool AddToShoppingCart(int userId, AddToShoppingCardDto item)
     {
         // var user = this._userRepository.GetById(item.UserId);
 
-        var userShoppingCard = _shoppingCartRepository.GetByUserId(item.UserId);
+        var userShoppingCard = _shoppingCartRepository.GetByUserId(userId);
 
         if (item.SelectedProductId != null && userShoppingCard != null)
         {

@@ -25,6 +25,18 @@ namespace Repository.Implementation
             return _context.Users.FirstOrDefault(u => u.Username == username);
         }
 
+        public int GetUserIdByUsername(string username)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+
+            if (user != null)
+            {
+                return user.Id;
+            }
+
+            return -1;
+        }
+
         public User GetByRefreshToken(string refreshToken)
         {
             return _context.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);

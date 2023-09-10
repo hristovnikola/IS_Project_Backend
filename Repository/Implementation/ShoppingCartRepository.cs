@@ -21,6 +21,13 @@ public class ShoppingCartRepository : IShoppingCartRepository
             .ThenInclude(pisc => pisc.Product)
             .SingleOrDefault(sc => sc.UserId == userId);
     }
+    
+    public ShoppingCart GetByUsername(string? username)
+    {
+        return entities.Include(sc => sc.ProductInShoppingCarts)
+            .ThenInclude(pisc => pisc.Product)
+            .SingleOrDefault(sc => sc.User.Username == username);
+    }
 
     public void Update(ShoppingCart shoppingCart)
     {
