@@ -11,7 +11,7 @@ using Service.Interface;
 
 namespace Web.Controllers;
 
-[Authorize]
+
 [Route("api/[controller]")]
 [ApiController]
 public class ProductsController : Controller

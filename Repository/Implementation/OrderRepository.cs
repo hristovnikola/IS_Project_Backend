@@ -15,12 +15,12 @@ public class OrderRepository : IOrderRepository
         entities = context.Set<Order>();
     }
 
-    public List<Order> getAllOrders()
+    public ICollection<Order> getAllOrders()
     {
         return entities
-            // .Include(z => z.User)
+            .Include(z => z.User)
             .Include(z => z.ProductInOrders)
-            .Include("ProductInOrders.Product")
+            .ThenInclude(po => po.Product)
             .ToListAsync().Result;
     }
 

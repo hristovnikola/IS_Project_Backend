@@ -1,3 +1,4 @@
+using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,7 +10,9 @@ using Repository.Implementation;
 using Repository.Interface;
 using Service.Implementation;
 using Service.Interface;
+using Stripe;
 using Swashbuckle.AspNetCore.Filters;
+using ProductService = Service.Implementation.ProductService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +27,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductInShoppingCartRepository, ProductInShoppingCartRepository>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductInOrderRepository, ProductInOrderRepository>();
 builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+// builder.Services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers().AddJsonOptions(x =>
@@ -78,12 +84,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+StripeConfiguration.ApiKey = "sk_test_51NNc7MJYxaVpIsNPosbXEYqIDeqsuvcTIlhcsybnc3AJWl1oYaD6Qv3Ll69URJTqoqB9xsbS7CTTDnBs7t1yjuGy00H3jLoqNk";
 
 app.UseCors("ReactAppCorsPolicy");
 

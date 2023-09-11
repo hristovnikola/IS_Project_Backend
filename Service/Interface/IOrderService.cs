@@ -1,8 +1,8 @@
 using Domain;
 
-namespace Repository.Interface;
+namespace Service.Interface;
 
-public interface IOrderRepository
+public interface IOrderService
 {
     public ICollection<Order> getAllOrders();
     public Order getOrderDetails(BaseEntity model);
