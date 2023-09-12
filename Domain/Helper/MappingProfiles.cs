@@ -17,13 +17,14 @@ public class MappingProfiles : Profile
         CreateMap<Order, OrderDto>()
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
             .ForMember(dest => dest.ProductInOrders, opt => opt.MapFrom(src => src.ProductInOrders));
-        
-        CreateMap<ProductInOrder, ProductDto>()
+
+        CreateMap<ProductInOrder, ProductInOrderDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Product.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
             .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.Product.ImagePath))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product.Description))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price));
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price))
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
         
         CreateMap<ProductInShoppingCart, ShoppingCartItemDto>()
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))

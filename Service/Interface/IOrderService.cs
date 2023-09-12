@@ -5,5 +5,5 @@ namespace Service.Interface;
 public interface IOrderService
 {
     public ICollection<Order> getAllOrders();
-    public Order getOrderDetails(BaseEntity model);
+    public Order getOrderDetails(int id);
 }

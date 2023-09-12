@@ -24,12 +24,12 @@ public class OrderRepository : IOrderRepository
             .ToListAsync().Result;
     }
 
-    public Order getOrderDetails(BaseEntity model)
+    public Order getOrderDetails(int id)
     {
         return entities
-            // .Include(z => z.User)
+            .Include(z => z.User)
             .Include(z => z.ProductInOrders)
-            .Include("ProductInOrders.Product")
-            .SingleOrDefaultAsync(z => z.Id == model.Id).Result;
+            .ThenInclude(po => po.Product)
+            .SingleOrDefaultAsync(z => z.Id == id).Result;
     }
 }

@@ -17,8 +17,8 @@ public class OrderService : IOrderService
         return this._orderRepository.getAllOrders();
     }
 
-    public Order getOrderDetails(BaseEntity model)
+    public Order getOrderDetails(int id)
     {
-        return this._orderRepository.getOrderDetails(model);
+        return this._orderRepository.getOrderDetails(id);
     }
 }
