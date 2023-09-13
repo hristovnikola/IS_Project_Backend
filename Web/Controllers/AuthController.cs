@@ -54,7 +54,8 @@ namespace Web.Controllers
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 RefreshToken = GenerateRefreshToken().Token,
-                ShoppingCart = new ShoppingCart()
+                ShoppingCart = new ShoppingCart(),
+                Role = "User"
             };
 
             _userRepository.Add(newUser);
@@ -163,7 +164,7 @@ namespace Web.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, "Admin")
+                new Claim(ClaimTypes.Role, user.Role)
             };
 
             var key = new SymmetricSecurityKey(

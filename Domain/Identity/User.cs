@@ -11,6 +11,7 @@ public class User : BaseEntity
     public string RefreshToken { get; set; }
     public DateTime TokenCreated { get; set; }
     public DateTime TokenExpires { get; set; }
+    public string Role { get; set; }
     
     public new int Id
     {

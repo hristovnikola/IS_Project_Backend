@@ -28,6 +28,9 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<User>()
             .HasIndex(user => user.Email);
+
+        modelBuilder.Entity<User>()
+            .Property(user => user.Role);
         
         modelBuilder.Entity<ShoppingCart>()
             .HasOne<User>(item => item.User)

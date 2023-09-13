@@ -1,7 +1,10 @@
 using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
+using Domain.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -32,10 +35,15 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductInOrderRepository, ProductInOrderRepository>();
 builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 // builder.Services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
+// builder.Services.AddMvc(options =>
+// {
+//     options.Filters.Add(new ConsumesAttribute("multipart/form-data"));
+// });
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddAuthorization();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
