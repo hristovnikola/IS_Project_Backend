@@ -13,6 +13,7 @@ public class MappingProfiles : Profile
         CreateMap<ProductDto, Product>();
         
         CreateMap<User, UserForOrderDto>(); 
+        CreateMap<User, UserDto>(); 
 
         CreateMap<Order, OrderDto>()
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))

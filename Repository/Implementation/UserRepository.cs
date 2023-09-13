@@ -42,6 +42,11 @@ namespace Repository.Implementation
             return _context.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
         }
 
+        public IEnumerable<User> GetAllUsers()
+        {
+            return entities.ToList();
+        }
+
         public void Add(User user)
         {
             if (user == null)

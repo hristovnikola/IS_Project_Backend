@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="ClosedXML" Version="0.102.1" />
+        <PackageReference Include="ExcelDataReader" Version="3.6.0" />
         <PackageReference Include="GemBox.Document" Version="35.0.1480" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
           <PrivateAssets>all</PrivateAssets>
@@ -28,5 +29,9 @@
       <ProjectReference Include="..\Service\Service.csproj" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <Folder Include="files\" />
+    </ItemGroup>
 
 </Project>

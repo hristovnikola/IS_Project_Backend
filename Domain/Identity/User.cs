@@ -12,6 +12,12 @@ public class User : BaseEntity
     public DateTime TokenCreated { get; set; }
     public DateTime TokenExpires { get; set; }
     
+    public new int Id
+    {
+        get { return base.Id; }
+        set { base.Id = value; }
+    }
+    
     public ShoppingCart ShoppingCart { get; set; }
     public ICollection<Order> Orders { get; set; }
 }
