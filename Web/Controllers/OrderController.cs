@@ -9,6 +9,7 @@ using System.Text;
 using ClosedXML.Excel;
 using GemBox.Document;
 using GemBox.Document.Tables;
+using Microsoft.AspNetCore.Authorization;
 using SaveOptions = GemBox.Document.SaveOptions;
 
 namespace Web.Controllers;
@@ -28,6 +29,7 @@ public class OrderController : Controller
 
     [HttpGet("getAllOrders/")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Order>))]
+    [Authorize("AdminPolicy")]
     public IActionResult GetOrders()
     {
         var result = _mapper.Map<List<OrderDto>>(this._orderService.getAllOrders());
@@ -38,6 +40,7 @@ public class OrderController : Controller
     }
 
     [HttpPost("createInvoice/{orderId}")]
+    [Authorize("AdminPolicy")]
     public ActionResult CreateInvoice(int orderId)
     {
         var order = _mapper.Map<OrderDto>(_orderService.getOrderDetails(orderId));
@@ -86,6 +89,7 @@ public class OrderController : Controller
     
     [HttpGet]
     [Route("exportAllOrders/")]
+    [Authorize("AdminPolicy")]
     public FileContentResult ExportAllOrders()
     {
         var result = _orderService.getAllOrders();

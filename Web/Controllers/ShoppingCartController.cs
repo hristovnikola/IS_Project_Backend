@@ -52,6 +52,7 @@ namespace Web.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize("UserPolicy")]
         public IActionResult RemoveProductFromShoppingCart(int productId)
         {
             var username = User.Identity?.Name;
@@ -74,6 +75,7 @@ namespace Web.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize("UserPolicy")]
         public IActionResult IncreaseProductQuantity(int productId)
         {
             var username = User.Identity?.Name;
@@ -96,6 +98,7 @@ namespace Web.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize("UserPolicy")]
         public IActionResult DecreaseProductQuantity(int productId)
         {
             var username = User.Identity?.Name;
@@ -118,6 +121,7 @@ namespace Web.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
+        [Authorize("UserPolicy")]
         public IActionResult Order()
         {
             var username = User.Identity?.Name;

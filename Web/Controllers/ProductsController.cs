@@ -58,6 +58,7 @@ public class ProductsController : Controller
     [HttpPost]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
+    [Authorize("AdminPolicy")]
     public IActionResult CreateProduct([FromBody] ProductDto productCreate)
     {
         if (productCreate == null)
@@ -91,6 +92,7 @@ public class ProductsController : Controller
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [Authorize("AdminPolicy")]
     public IActionResult UpdateProduct([FromBody] ProductDto updatedProduct)
     {
         if (updatedProduct == null)
@@ -133,6 +135,7 @@ public class ProductsController : Controller
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
+    [Authorize("AdminPolicy")]
     public IActionResult DeleteProduct(int productId)
     {
         if (!_productService.ProductExists(productId))

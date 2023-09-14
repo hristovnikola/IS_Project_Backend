@@ -38,11 +38,18 @@ namespace Web.Controllers
             return Ok(username);
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDto request)
+        [HttpPost("register/")]
+        public async Task<ActionResult<User>> Register(RegisterUserDtoFromForm request)
         {
             // try
             // {
+            var user = _userRepository.GetByUsername(request.Username);
+
+            if (user != null)
+            {
+                return BadRequest("User with this username already exists");
+            }
+            
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             var newUser = new User
@@ -70,6 +77,7 @@ namespace Web.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<string>> Login([FromBody] LoginUserDto request)
         {
             try

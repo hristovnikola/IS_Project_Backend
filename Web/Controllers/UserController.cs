@@ -5,6 +5,7 @@ using Domain;
 using Domain.Dto;
 using Domain.Identity;
 using ExcelDataReader;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.Interface;
@@ -43,6 +44,7 @@ public class UserController : Controller
     }
 
     [HttpPost("importUsers/")]
+    [Authorize("AdminPolicy")]
     public IActionResult ImportUsers(IFormFile file)
     {
         //make a copy
@@ -67,6 +69,7 @@ public class UserController : Controller
         return RedirectToAction("GetAllProducts", "User");
     }
 
+    [Authorize("AdminPolicy")]
     private List<UserDto> GetUsersFromExcelFile(string fileName)
     {
         string pathToFile = $"{Directory.GetCurrentDirectory()}\\files\\{fileName}";
@@ -96,7 +99,9 @@ public class UserController : Controller
         return userList;
     }
 
+    
     [HttpPost("importAllUsers/")]
+    [Authorize("AdminPolicy")]
     public IActionResult ImportAllUsers(List<UserDto> model)
     {
         bool status = true;
@@ -124,6 +129,7 @@ public class UserController : Controller
     }
 
 
+    [AllowAnonymous]
     private async Task<ActionResult<User>> Register(UserDto request)
     {
         // try
